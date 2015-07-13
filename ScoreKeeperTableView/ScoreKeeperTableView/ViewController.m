@@ -6,9 +6,18 @@
 //  Copyright (c) 2015 MichelleTessier. All rights reserved.
 //
 
-#import "ViewController.h"
+//test
 
-@interface ViewController ()
+#import "ViewController.h"
+#import "PlayerController.h"
+#import "PlayerTableViewCell.h"
+
+static NSString * const playerCellKey = @"PlayerCellKey";
+
+@interface ViewController () <UITableViewDataSource, UITableViewDelegate>
+
+@property (nonatomic, strong) UITableView *tableview;
+@property (nonatomic, strong) PlayerController *playerController;
 
 @end
 
@@ -16,8 +25,43 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    self.title = @"Score Keeper";
+    
+     self.playerController = [PlayerController new];
+    
+    self.tableview = [[UITableView alloc] initWithFrame:self.view.frame];
+    
+    self.tableview.dataSource = self;
+    self.tableview.delegate = self;
+    self.tableview.allowsSelection = NO;
+    
+    [self.tableview registerClass:[PlayerTableViewCell class] forCellReuseIdentifier:playerCellKey];
+    
+    [self.view addSubview: self.tableview];
 }
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    
+    return self.playerController.players.count;
+    
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+  
+    PlayerTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:playerCellKey];
+    
+    [cell updateWithPlayer:self.playerController.players[indexPath.row]];
+    
+    return cell;
+}
+
+- (CGFloat)tableView: (UITableView *) tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 80;
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
